@@ -18,9 +18,11 @@ def fetch_transactions_iteratively(wallet_address, rpc_url):
 
     while True:
         # Set up the request payload
-        params = {"limit": 10}  # Fetch 10 transactions per request
+        params = {"limit": 50}  # Fetch 50 transactions per request
         if before_signature:
             params["before"] = before_signature
+
+        print(f"Fetching batch before signature: {before_signature}")  # Debugging output
 
         payload = {
             "jsonrpc": "2.0",
