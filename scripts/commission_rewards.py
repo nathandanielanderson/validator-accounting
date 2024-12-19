@@ -1,29 +1,20 @@
 import requests
 import json
 
-# Solana RPC endpoint
-RPC_URL = "https://mainnet.helius-rpc.com/?api-key=a2aa86f7-26ec-4b6d-89ae-99b9183ffc4d"
-
-# Stake account addresses
-STAKE_ACCOUNTS = [
-    "nateBZg7oHVPLB2samBLkKvfzedU3ALZBexMFPMKjn1"  # Replace with your stake account
-]
-
-# Get current epoch
-def get_current_epoch():
-    payload = {"jsonrpc": "2.0", "id": 1, "method": "getEpochInfo"}
-    response = requests.post(RPC_URL, json=payload)
-    return response.json()["result"]["epoch"]
+# Load configuration
+def load_config():
+    with open("config.json", "r") as config_file:
+        return json.load(config_file)
 
 # Fetch inflation rewards for a given epoch
-def fetch_inflation_rewards(epoch):
+def fetch_inflation_rewards(rpc_url, stake_accounts, epoch):
     payload = {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "getInflationReward",
-        "params": [STAKE_ACCOUNTS, {"epoch": epoch}]
+        "params": [stake_accounts, {"epoch": epoch}]
     }
-    response = requests.post(RPC_URL, json=payload)
+    response = requests.post(rpc_url, json=payload)
     return response.json().get("result", [])
 
 # Write results to JSON
@@ -36,8 +27,15 @@ def write_to_json(data):
 def main():
     print("🚀 Starting Commission Reward Calculation...")
 
+    # Load configuration
+    config = load_config()
+    rpc_url = config["RPC_URL"]
+    stake_accounts = config["STAKE_ACCOUNTS"]
+
     # Get current epoch
-    current_epoch = get_current_epoch()
+    payload = {"jsonrpc": "2.0", "id": 1, "method": "getEpochInfo"}
+    response = requests.post(rpc_url, json=payload)
+    current_epoch = response.json()["result"]["epoch"]
     print(f"🔍 Current Epoch: {current_epoch}")
 
     # Ask user for the starting epoch
@@ -52,7 +50,7 @@ def main():
         print(f"🔍 Processing Epoch {epoch}...")
 
         # Fetch inflation rewards
-        rewards = fetch_inflation_rewards(epoch)
+        rewards = fetch_inflation_rewards(rpc_url, stake_accounts, epoch)
         if not rewards:
             print(f"⚠️ No rewards found for epoch {epoch}. Skipping.")
             continue
