@@ -3,7 +3,7 @@ import json
 
 # Load configuration
 def load_config():
-    with open("config.json", "r") as config_file:
+    with open("../config.json", "r") as config_file:
         return json.load(config_file)
 
 # Fetch inflation rewards for a given epoch
