@@ -19,9 +19,9 @@ def fetch_inflation_rewards(rpc_url, stake_accounts, epoch):
 
 # Write results to JSON
 def write_to_json(data):
-    with open("commission_rewards.json", "w") as jsonfile:
+    with open("./output/commission_rewards.json", "w") as jsonfile:
         json.dump(data, jsonfile, indent=4)
-    print("✅ Commission Rewards saved to 'commission_rewards.json'.")
+    print("✅ Commission Rewards saved to './output/commission_rewards.json'.")
 
 # Main function
 def main():
@@ -61,10 +61,10 @@ def main():
         # Append data
         all_data.append({
             "Epoch": epoch,
-            "Commission Rewards (SOL)": round(commission_rewards, 2)
+            "Commission Rewards (SOL)": round(commission_rewards, 3)
         })
 
-        print(f"  ✅ Commission Rewards: {commission_rewards:.2f} SOL")
+        print(f"  ✅ Commission Rewards: {commission_rewards:.3f} SOL")
 
     # Write results to JSON
     write_to_json(all_data)
