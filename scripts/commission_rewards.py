@@ -1,5 +1,5 @@
 import requests
-import csv
+import json
 
 # Solana RPC endpoint
 RPC_URL = "https://mainnet.helius-rpc.com/?api-key=a2aa86f7-26ec-4b6d-89ae-99b9183ffc4d"
@@ -26,15 +26,11 @@ def fetch_inflation_rewards(epoch):
     response = requests.post(RPC_URL, json=payload)
     return response.json().get("result", [])
 
-# Write results to CSV
-def write_to_csv(data):
-    with open("commission_rewards.csv", "w", newline="") as csvfile:
-        fieldnames = ["Epoch", "Commission Rewards (SOL)"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in data:
-            writer.writerow(row)
-    print("✅ Commission Rewards saved to 'commission_rewards.csv'.")
+# Write results to JSON
+def write_to_json(data):
+    with open("commission_rewards.json", "w") as jsonfile:
+        json.dump(data, jsonfile, indent=4)
+    print("✅ Commission Rewards saved to 'commission_rewards.json'.")
 
 # Main function
 def main():
@@ -72,8 +68,8 @@ def main():
 
         print(f"  ✅ Commission Rewards: {commission_rewards:.2f} SOL")
 
-    # Write results to CSV
-    write_to_csv(all_data)
+    # Write results to JSON
+    write_to_json(all_data)
     print("🎉 Done!")
 
 if __name__ == "__main__":
